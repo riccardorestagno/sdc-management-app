@@ -3,6 +3,7 @@ import './condo-fees-admin-view-component.css';
 import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
+import UnitNumbers from '../../../enums/unitNumbers';
 
 const AdminCondoFees = () => {
     const [data, setData] = useState({
@@ -55,9 +56,9 @@ const AdminCondoFees = () => {
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [payFrequency, setPayFrequency] = useState(PayFrequencyType.MONTHLY);
     const [paymentStatus, setPaymentStatus] = useState(PaymentStatusType.PAID);
-    const [selectedName, setSelectedName] = useState('');
+    const [selectedUnit, setSelectedUnit] = useState('');
 
-    const names = Object.keys(data);
+    const names = Object.keys(data); // To change. Will be retrieved from DB
 
     return (
         <div>
@@ -139,22 +140,22 @@ const AdminCondoFees = () => {
                 </div>
 
                 <div>
-                    <label htmlFor="name-select">Co-Owner:</label>
+                    <label htmlFor="name-select">Unit Number:</label>
                     <select
                         id="name-select"
-                        value={selectedName}
-                        onChange={(e) => setSelectedName(e.target.value)}
+                        value={selectedUnit}
+                        onChange={(e) => setSelectedUnit(e.target.value)}
                     >
-                        <option value="">--Select Co-Owner--</option>
-                        {names.map((name) => (
-                            <option key={name} value={name}>
-                                {name}
+                        <option value="">--Select Unit Number--</option>
+                        {Object.values(UnitNumbers).map((unit) => (
+                            <option key={unit} value={unit}>
+                                {unit}
                             </option>
                         ))}
                     </select>
                 </div>
 
-                <button onClick={() => console.log(selectedMonth, payFrequency, paymentStatus, selectedName)}>
+                <button onClick={() => console.log(selectedMonth, payFrequency, paymentStatus, selectedUnit)}>
                     Submit
                 </button>
             </div>
