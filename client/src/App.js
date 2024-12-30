@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css'; // Create this file to style your app
 import AdminCondoFees from './components/admin/condo-fees-admin-view-component/condo-fees-admin-view-component';
+import HotWaterTankReplacement from './components/admin/hot-water-tank-inventory-component/hot-water-tank-inventory-component';
 import { AdminTabs } from './enums/adminTabs';
 import { CoOwnerTabs } from './enums/coOwnerTabs';
 import { AccessType } from './enums/accessType';
@@ -25,8 +26,8 @@ const App = () => {
             return <AdminCondoFees />;
           // case AdminTabs.BANK_ACCOUNT:
           //   return <AdminBankAccount />;
-          // case AdminTabs.TANK_REPLACEMENT:
-          //   return <AdminTankReplacement/>;
+          case AdminTabs.TANK_REPLACEMENT:
+            return <HotWaterTankReplacement />;
           default:
             return <p>No details available for this row.</p>;
         }

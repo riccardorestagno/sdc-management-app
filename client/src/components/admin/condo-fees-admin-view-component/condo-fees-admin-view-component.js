@@ -8,7 +8,7 @@ import UnitNumbers from '../../../enums/unitNumbers';
 const AdminCondoFees = () => {
     const [data, setData] = useState({
         John: {
-            January: { amount: 100, paid: false },
+            January: { amount: 100, paid: true },
             February: { amount: 150, paid: false },
             March: { amount: 200, paid: false },
             April: { amount: 110, paid: false },
@@ -67,7 +67,7 @@ const AdminCondoFees = () => {
                     <table className="excel-table">
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>2025</th>
                                 {Object.values(Months).map((month) => (
                                     <td key={month}>{month}</td>
                                 ))}
@@ -94,6 +94,22 @@ const AdminCondoFees = () => {
 
             </div>
             <div className="widget">
+                <div>
+                    <label htmlFor="name-select">Unit Number:</label>
+                    <select
+                        id="name-select"
+                        value={selectedUnit}
+                        onChange={(e) => setSelectedUnit(e.target.value)}
+                    >
+                        <option value="">--Select Unit Number--</option>
+                        {Object.values(UnitNumbers).map((unit) => (
+                            <option key={unit} value={unit}>
+                                {unit}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 <div>
                     <label htmlFor="column-select">Month:</label>
                     <select
@@ -139,25 +155,29 @@ const AdminCondoFees = () => {
                     </select>
                 </div>
 
-                <div>
-                    <label htmlFor="name-select">Unit Number:</label>
-                    <select
-                        id="name-select"
-                        value={selectedUnit}
-                        onChange={(e) => setSelectedUnit(e.target.value)}
-                    >
-                        <option value="">--Select Unit Number--</option>
-                        {Object.values(UnitNumbers).map((unit) => (
-                            <option key={unit} value={unit}>
-                                {unit}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+
 
                 <button onClick={() => console.log(selectedMonth, payFrequency, paymentStatus, selectedUnit)}>
                     Submit
                 </button>
+            </div>
+
+            <div className="unit-info-container">
+                <div>
+                    <label htmlFor="column-select">Owner name: 'data here'</label>
+                </div>
+
+                <div>
+                    <label htmlFor="column-select">Owner email: 'data here'</label>
+                </div>
+
+                <div>
+                    <label htmlFor="column-select">Owner phone numer: 'data here'</label>
+                </div>
+
+                <div>
+                    <label htmlFor="column-select">Notes on file:</label>
+                </div>
             </div>
         </div>
 
