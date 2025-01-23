@@ -1,55 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './condo-fees-admin-view-component.css';
 import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
+import { getPayments } from "../../../api";
 
-const AdminCondoFees = () => {
-    const [data, setData] = useState({
-        John: {
-            January: { amount: 100, paid: true },
-            February: { amount: 150, paid: false },
-            March: { amount: 200, paid: false },
-            April: { amount: 110, paid: false },
-            May: { amount: 130, paid: false },
-            June: { amount: 140, paid: false },
-            July: { amount: 120, paid: false },
-            August: { amount: 150, paid: false },
-            September: { amount: 160.45, paid: false },
-            October: { amount: 170, paid: false },
-            November: { amount: 180, paid: false },
-            December: { amount: 190, paid: false },
-        },
-        Jane: {
-            January: { amount: 120, paid: false },
-            February: { amount: 180, paid: false },
-            March: { amount: 250, paid: false },
-            April: { amount: 130, paid: false },
-            May: { amount: 150, paid: false },
-            June: { amount: 160, paid: false },
-            July: { amount: 140, paid: false },
-            August: { amount: 170, paid: false },
-            September: { amount: 180, paid: false },
-            October: { amount: 190, paid: false },
-            November: { amount: 200, paid: false },
-            December: { amount: 210, paid: false },
-        },
-        Alice: {
-            January: { amount: 130, paid: false },
-            February: { amount: 170, paid: false },
-            March: { amount: 220, paid: false },
-            April: { amount: 140, paid: false },
-            May: { amount: 160, paid: false },
-            June: { amount: 170, paid: false },
-            July: { amount: 150, paid: false },
-            August: { amount: 180, paid: false },
-            September: { amount: 190, paid: false },
-            October: { amount: 200, paid: false },
-            November: { amount: 210, paid: false },
-            December: { amount: 220, paid: false },
-        },
-    });
+const AdminCondoFees = ({ year }) => {
+    const [payments, setPayments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchPayments = async () => {
+            try {
+                setLoading(true);
+                const data = await getPayments(year);
+                setPayments(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPayments();
+    }, [year]);
 
     const currentMonth = new Date().toLocaleString("default", { month: "long" });
 
@@ -58,7 +34,8 @@ const AdminCondoFees = () => {
     const [paymentStatus, setPaymentStatus] = useState(PaymentStatusType.PAID);
     const [selectedUnit, setSelectedUnit] = useState('');
 
-    const names = Object.keys(data); // To change. Will be retrieved from DB
+    if (loading) return <p>Loading payments...</p>;
+    if (error) return <p>Error: {error}</p>;
 
     return (
         <div>
@@ -74,25 +51,23 @@ const AdminCondoFees = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {names.map((name) => (
-                                <tr key={name}>
-                                    <td>{name}</td>
-                                    {Object.values(Months).map((month) => (
+                            {payments.map((payment) => (
+                                <tr key={payment.address}>
+                                    <td>{UnitNumbers[payment.address]}</td>
+                                    {Object.values(Months).map((month, index) => (
                                         <td key={month}
-                                            className={data[name][month].paid ? 'paid' : 'unpaid'}
+                                            className={payment.months_paid > index ? 'paid' : 'unpaid'}
                                         >
-                                            ${data[name][month].amount}
+                                            ${(Math.round(payment.monthly_payment * 100) / 100).toFixed(2)}
                                         </td>
                                     ))}
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-
                 </div>
-
             </div>
+
             <div className="widget">
                 <div>
                     <label htmlFor="name-select">Unit Number:</label>
