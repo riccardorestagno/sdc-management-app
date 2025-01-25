@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import distinct
 from sqlalchemy.orm import Session
 from server.database.session import get_db
 from server.database.models import Unit, Payment
@@ -6,6 +7,12 @@ from server.schemas.payment import PaymentUpdate
 from server.enums.payment import PayFrequency
 
 router = APIRouter()
+
+
+@router.get("/years", response_model=list[int])
+def get_unique_years(db: Session = Depends(get_db)):
+    years = db.query(distinct(Payment.year)).all()
+    return [year[0] for year in years]
 
 
 @router.get("/{year}")
@@ -34,7 +41,7 @@ def update_payments(year: int, payment: PaymentUpdate, db: Session = Depends(get
 
     payment_record = db.query(Payment).filter(Payment.unit_id == unit.id, Payment.year == year).one_or_none()
     if not payment_record:
-        raise HTTPException(status_code=404, detail="Payment record not found")
+        raise HTTPException(status_code=404, detail=f"Payment record not found. Please initialize the fiscal year '{year}'.")
 
     if payment.pay_frequency == PayFrequency.SPECIAL_CONTRIBUTION:
         payment_record.special_contribution_paid = payment.paid

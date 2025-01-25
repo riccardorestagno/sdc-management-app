@@ -15,11 +15,13 @@ def load_data_from_json(file_path):
     db_session = db.SessionLocal()
     try:
         for address, years in data.items():
-            # Add unit
-            unit = Unit(address=address)
-            db_session.add(unit)
-            db_session.commit()
-            db_session.refresh(unit)
+            # Add unit if it exists
+            unit = db_session.query(Unit).filter_by(address=address).one_or_none()
+            if not unit:
+                unit = Unit(address=address)
+                db_session.add(unit)
+                db_session.commit()
+                db_session.refresh(unit)
 
             # Add payments
             for year, details in years.items():

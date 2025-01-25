@@ -12,6 +12,16 @@ export const getUnitInfo = async () => {
     }
 };
 
+export const getYears = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/payments/years`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching years:", error);
+        throw error;
+    }
+};
+
 export const getPayments = async (year) => {
     try {
         const response = await axios.get(`${API_BASE_URL}/payments/${year}`);

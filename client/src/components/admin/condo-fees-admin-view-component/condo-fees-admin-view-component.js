@@ -4,10 +4,12 @@ import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
-import { getPayments, updatePayment } from "../../../api";
+import { getPayments, getYears, updatePayment } from "../../../api";
 
-const AdminCondoFees = ({ year }) => {
+const AdminCondoFees = ({ currentYear }) => {
+    const [year, setCurrentYear] = useState(currentYear); // Default to year in component input
     const [payments, setPayments] = useState([]);
+    const [years, setYears] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -26,6 +28,22 @@ const AdminCondoFees = ({ year }) => {
 
         fetchPayments();
     }, [year]);
+
+    useEffect(() => {
+        const fetchYears = async () => {
+            try {
+                setLoading(true);
+                const data = await getYears();
+                setYears(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchYears();
+    }, []);
 
     const currentMonthLabel = new Date().toLocaleString("default", { month: "long" });
     const currentMonth = Object.values(Months).find(month => month.label === currentMonthLabel);
@@ -57,7 +75,15 @@ const AdminCondoFees = ({ year }) => {
                     <table className="excel-table">
                         <thead>
                             <tr>
-                                <th>2025</th>
+                                <th>
+                                    <select value={year} onChange={(e) => setCurrentYear(e.target.value)}>
+                                        {years.map((year) => (
+                                            <option key={year} value={year}>
+                                                {year}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </th>
                                 {Object.values(Months).map((month) => (
                                     <td key={month.value}>{month.label}</td>
                                 ))}

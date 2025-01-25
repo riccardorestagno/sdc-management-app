@@ -23,7 +23,7 @@ const App = () => {
       case AccessType.ADMIN:
         switch (rowTabs[activeColumn][activeRow[activeColumn]]) {
           case AdminTabs.CONDO_FEES:
-            return <AdminCondoFees year={2025} />;
+            return <AdminCondoFees currentYear={2025} />;
           // case AdminTabs.BANK_ACCOUNT:
           //   return <AdminBankAccount />;
           case AdminTabs.TANK_REPLACEMENT:
