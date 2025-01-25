@@ -29,9 +29,9 @@ yarn-error.log*
 /client/node_modules
 
 # back-end
-/server/app/__pycache__
-/server/__pycache__
+/server/__pycache__/
+/server/*/__pycache__/
+/server/**/__pycache__/
 /server/.idea
 /server/env
-server/**/*.db
-server/**/*.json
+/server/data/*

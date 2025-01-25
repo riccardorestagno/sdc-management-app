@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 
 
 class Database:
-    def __init__(self, database_url="sqlite:///db/condo.db"):
+    def __init__(self, database_url="sqlite:///data/condo.db"):
         """Initialize the database connection dynamically."""
         self.engine = create_engine(database_url, connect_args={"check_same_thread": False})
         self.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=self.engine)
@@ -24,7 +24,7 @@ class Database:
 
 
 # Define models (Must use the same Base instance from the Database class)
-def database_models(db: Database):
+def models(db: Database):
     class Unit(db.Base):
         __tablename__ = "units"
         id = Column(Integer, primary_key=True, index=True)

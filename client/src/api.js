@@ -21,3 +21,22 @@ export const getPayments = async (year) => {
         throw error;
     }
 };
+
+export const updatePayment = async (year, paymentData) => {
+    try {
+        const response = await axios.put(
+            `${API_BASE_URL}/payments/${year}`,
+            paymentData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        console.log("Payment updated successfully:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating payment:", error.response?.data || error.message);
+        throw error;
+    }
+};

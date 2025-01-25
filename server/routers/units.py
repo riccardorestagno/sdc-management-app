@@ -1,0 +1,21 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from server.database.session import get_db
+from server.database.models import Unit
+
+router = APIRouter()
+
+
+@router.get("/")
+def read_units(db: Session = Depends(get_db)):
+    """Fetch all units and their payments."""
+    units = db.query(Unit).all()
+    result = [
+        {
+            "address": unit.address,
+            "payments": [{"year": p.year, "amount_owed": p.amount_owed, "amount_paid": p.amount_paid, "special_contribution_paid": p.special_contribution_paid} for p in unit.payments],
+            "owner_info": unit.owner,
+        }
+        for unit in units
+    ]
+    return result

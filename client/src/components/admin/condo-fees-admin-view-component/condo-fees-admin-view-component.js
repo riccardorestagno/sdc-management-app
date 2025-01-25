@@ -4,7 +4,7 @@ import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
-import { getPayments } from "../../../api";
+import { getPayments, updatePayment } from "../../../api";
 
 const AdminCondoFees = ({ year }) => {
     const [payments, setPayments] = useState([]);
@@ -27,12 +27,25 @@ const AdminCondoFees = ({ year }) => {
         fetchPayments();
     }, [year]);
 
-    const currentMonth = new Date().toLocaleString("default", { month: "long" });
+    const currentMonthLabel = new Date().toLocaleString("default", { month: "long" });
+    const currentMonth = Object.values(Months).find(month => month.label === currentMonthLabel);
 
-    const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-    const [payFrequency, setPayFrequency] = useState(PayFrequencyType.MONTHLY);
+    const [selectedMonth, setSelectedMonth] = useState(currentMonth.value);
+    const [payFrequency, setPayFrequency] = useState(PayFrequencyType.MONTHLY.value);
     const [paymentStatus, setPaymentStatus] = useState(PaymentStatusType.PAID);
     const [selectedUnit, setSelectedUnit] = useState('');
+
+    const submitPaymentUpdate = async (selectedMonth, payFrequency, paymentStatus, selectedUnit) => {
+        const paymentData = {
+            "address": selectedUnit,
+            "pay_frequency": payFrequency,
+            "month": selectedMonth,
+            "paid": paymentStatus == PaymentStatusType.PAID
+        };
+        console.log(paymentData)
+        const data = await updatePayment(year, paymentData)
+        console.log(data)
+    };
 
     if (loading) return <p>Loading payments...</p>;
     if (error) return <p>Error: {error}</p>;
@@ -46,14 +59,14 @@ const AdminCondoFees = ({ year }) => {
                             <tr>
                                 <th>2025</th>
                                 {Object.values(Months).map((month) => (
-                                    <td key={month}>{month}</td>
+                                    <td key={month.value}>{month.label}</td>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
                             {payments.map((payment) => (
                                 <tr key={payment.address}>
-                                    <td>{UnitNumbers[payment.address]}</td>
+                                    <td>{UnitNumbers[payment.address].label}</td>
                                     {Object.values(Months).map((month, index) => (
                                         <td key={month}
                                             className={payment.months_paid > index ? 'paid' : 'unpaid'}
@@ -78,8 +91,8 @@ const AdminCondoFees = ({ year }) => {
                     >
                         <option value="">--Select Unit Number--</option>
                         {Object.values(UnitNumbers).map((unit) => (
-                            <option key={unit} value={unit}>
-                                {unit}
+                            <option key={unit.value} value={unit.value}>
+                                {unit.label}
                             </option>
                         ))}
                     </select>
@@ -92,9 +105,9 @@ const AdminCondoFees = ({ year }) => {
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
                     >
-                        {Object.values(Months).map((tab) => (
-                            <option key={tab} value={tab}>
-                                {tab}
+                        {Object.values(Months).map((month) => (
+                            <option key={month.value} value={month.value}>
+                                {month.label}
                             </option>
                         ))}
                     </select>
@@ -107,9 +120,9 @@ const AdminCondoFees = ({ year }) => {
                         value={payFrequency}
                         onChange={(e) => setPayFrequency(e.target.value)}
                     >
-                        {Object.values(PayFrequencyType).map((tab) => (
-                            <option key={tab} value={tab}>
-                                {tab}
+                        {Object.values(PayFrequencyType).map((type) => (
+                            <option key={type.value} value={type.value}>
+                                {type.label}
                             </option>
                         ))}
                     </select>
@@ -132,7 +145,7 @@ const AdminCondoFees = ({ year }) => {
 
 
 
-                <button onClick={() => console.log(selectedMonth, payFrequency, paymentStatus, selectedUnit)}>
+                <button onClick={() => submitPaymentUpdate(selectedMonth, payFrequency, paymentStatus, selectedUnit)}>
                     Submit
                 </button>
             </div>

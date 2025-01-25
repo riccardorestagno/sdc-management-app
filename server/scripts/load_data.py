@@ -1,5 +1,5 @@
 import json
-from server.app.database import Database, database_models
+from server.database.database import Database, models
 
 
 def load_data_from_json(file_path):
@@ -7,8 +7,8 @@ def load_data_from_json(file_path):
         data = json.load(file)
 
     # Initialize the database schema
-    db = Database("sqlite:///../db/condo.db")
-    Unit, Owner, Payment = database_models(db)
+    db = Database("sqlite:///../data/condo.db")
+    Unit, Owner, Payment = models(db)
     db.init_db()
 
     # Create a new session
@@ -37,4 +37,4 @@ def load_data_from_json(file_path):
 
 
 if __name__ == "__main__":
-    load_data_from_json("data.json")
+    load_data_from_json("../data/data.json")
