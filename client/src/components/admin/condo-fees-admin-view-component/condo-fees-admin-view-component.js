@@ -60,9 +60,7 @@ const AdminCondoFees = ({ currentYear }) => {
             "month": selectedMonth,
             "paid": paymentStatus == PaymentStatusType.PAID
         };
-        console.log(paymentData)
-        const data = await updatePayment(year, paymentData)
-        console.log(data)
+        await updatePayment(year, paymentData)
     };
 
     if (loading) return <p>Loading payments...</p>;
@@ -87,6 +85,7 @@ const AdminCondoFees = ({ currentYear }) => {
                                 {Object.values(Months).map((month) => (
                                     <td key={month.value}>{month.label}</td>
                                 ))}
+                                <td key={PayFrequencyType.SPECIAL_CONTRIBUTION.value}>{PayFrequencyType.SPECIAL_CONTRIBUTION.label}</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,6 +99,11 @@ const AdminCondoFees = ({ currentYear }) => {
                                             ${(Math.round(payment.monthly_payment * 100) / 100).toFixed(2)}
                                         </td>
                                     ))}
+                                    <td key={PayFrequencyType.SPECIAL_CONTRIBUTION.value}
+                                        className={payment.special_contribution_paid ? 'paid' : 'unpaid'}
+                                    >
+                                        $450
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -131,11 +135,18 @@ const AdminCondoFees = ({ currentYear }) => {
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
                     >
-                        {Object.values(Months).map((month) => (
-                            <option key={month.value} value={month.value}>
-                                {month.label}
-                            </option>
-                        ))}
+                        {Object.values(Months)
+                            .filter((month) => {
+                                if (payFrequency == PayFrequencyType.ANNUALLY.value) return month.value == 0;
+                                if (payFrequency == PayFrequencyType.QUARTERLY.value) return [0, 3, 6, 9].includes(month.value);
+                                if (payFrequency == PayFrequencyType.SPECIAL_CONTRIBUTION.value) return false;
+                                return true; // Show all months by default
+                            })
+                            .map((month) => (
+                                <option key={month.value} value={month.value} disabled={payFrequency == PayFrequencyType.ANNUALLY.value || payFrequency == PayFrequencyType.SPECIAL_CONTRIBUTION}>
+                                    {month.label}
+                                </option>
+                            ))}
                     </select>
                 </div>
 
@@ -171,7 +182,10 @@ const AdminCondoFees = ({ currentYear }) => {
 
 
 
-                <button onClick={() => submitPaymentUpdate(selectedMonth, payFrequency, paymentStatus, selectedUnit)}>
+                <button onClick={() => {
+                    submitPaymentUpdate(selectedMonth, payFrequency, paymentStatus, selectedUnit);
+                    window.location.reload();
+                }}>
                     Submit
                 </button>
             </div>
