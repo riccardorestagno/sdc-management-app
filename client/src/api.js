@@ -7,7 +7,7 @@ export const getUnitInfo = async () => {
         const response = await axios.get(`${API_BASE_URL}/units`);
         return response.data;
     } catch (error) {
-        console.error("Error fetching payments:", error);
+        console.error("Error fetching unit:", error);
         throw error;
     }
 };
@@ -31,6 +31,20 @@ export const getPayments = async (year) => {
         throw error;
     }
 };
+
+export const getOwnerInfoByUnitAddressId = async (unit_address_id) => {
+    try {
+        if (!unit_address_id) {
+            return {};
+        }
+        const response = await axios.get(`${API_BASE_URL}/owners/unit/${unit_address_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching owner info:", error);
+        throw error;
+    }
+};
+
 
 export const updatePayment = async (year, paymentData) => {
     try {

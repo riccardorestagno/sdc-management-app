@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from server.database.session import database
-from server.routers import units, payments
+from server.routers import units, owners, payments
 
 # Initialize database
 database.init_db()
@@ -21,6 +21,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(units.router, prefix="/units", tags=["Units"])
+app.include_router(owners.router, prefix="/owners", tags=["Owners"])
 app.include_router(payments.router, prefix="/payments", tags=["Payments"])
 
 

@@ -4,11 +4,21 @@ import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
-import { getPayments, getYears, updatePayment } from "../../../api";
+import { getPayments, getOwnerInfoByUnitAddressId, getYears, updatePayment } from "../../../api";
 
 const AdminCondoFees = ({ currentYear }) => {
+
+    const currentMonthLabel = new Date().toLocaleString("default", { month: "long" });
+    const currentMonth = Object.values(Months).find(month => month.label === currentMonthLabel);
+
+    const [selectedMonth, setSelectedMonth] = useState(currentMonth.value);
+    const [payFrequency, setPayFrequency] = useState(PayFrequencyType.MONTHLY.value);
+    const [paymentStatus, setPaymentStatus] = useState(PaymentStatusType.PAID);
+
     const [year, setCurrentYear] = useState(currentYear); // Default to year in component input
     const [payments, setPayments] = useState([]);
+    const [ownerInfo, setOwnerInfo] = useState([]);
+    const [selectedUnitAddressId, setSelectedUnitAddressId] = useState('');
     const [years, setYears] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -30,6 +40,19 @@ const AdminCondoFees = ({ currentYear }) => {
     }, [year]);
 
     useEffect(() => {
+        const fetchOwnerInfo = async () => {
+            try {
+                const data = await getOwnerInfoByUnitAddressId(selectedUnitAddressId);
+                setOwnerInfo(data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchOwnerInfo();
+    }, [selectedUnitAddressId]);
+
+    useEffect(() => {
         const fetchYears = async () => {
             try {
                 setLoading(true);
@@ -45,17 +68,9 @@ const AdminCondoFees = ({ currentYear }) => {
         fetchYears();
     }, []);
 
-    const currentMonthLabel = new Date().toLocaleString("default", { month: "long" });
-    const currentMonth = Object.values(Months).find(month => month.label === currentMonthLabel);
-
-    const [selectedMonth, setSelectedMonth] = useState(currentMonth.value);
-    const [payFrequency, setPayFrequency] = useState(PayFrequencyType.MONTHLY.value);
-    const [paymentStatus, setPaymentStatus] = useState(PaymentStatusType.PAID);
-    const [selectedUnit, setSelectedUnit] = useState('');
-
-    const submitPaymentUpdate = async (selectedMonth, payFrequency, paymentStatus, selectedUnit) => {
+    const submitPaymentUpdate = async (selectedMonth, payFrequency, paymentStatus, selectedUnitAddressId) => {
         const paymentData = {
-            "address": selectedUnit,
+            "address": selectedUnitAddressId,
             "pay_frequency": payFrequency,
             "month": selectedMonth,
             "paid": paymentStatus == PaymentStatusType.PAID
@@ -91,7 +106,30 @@ const AdminCondoFees = ({ currentYear }) => {
                         <tbody>
                             {payments.map((payment) => (
                                 <tr key={payment.address}>
-                                    <td>{UnitNumbers[payment.address].label}</td>
+                                    <td>
+                                        <button onClick={() => setSelectedUnitAddressId(UnitNumbers[payment.address].value)}
+                                            style={{
+                                                background: "none",
+                                                border: "none",
+                                                cursor: "pointer",
+                                                padding: 0,
+                                                textAlign: "left",
+                                                fontSize: "inherit",
+                                                color: "inherit",
+                                                width: "100%",
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.transform = "scale(1.05)";
+                                                e.target.style.color = "#007bff";
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.transform = "scale(1)";
+                                                e.target.style.color = "inherit";
+                                            }}
+                                        >
+                                            {UnitNumbers[payment.address].label}
+                                        </button>
+                                    </td>
                                     {Object.values(Months).map((month, index) => (
                                         <td key={month}
                                             className={payment.months_paid > index ? 'paid' : 'unpaid'}
@@ -116,8 +154,8 @@ const AdminCondoFees = ({ currentYear }) => {
                     <label htmlFor="name-select">Unit Number:</label>
                     <select
                         id="name-select"
-                        value={selectedUnit}
-                        onChange={(e) => setSelectedUnit(e.target.value)}
+                        value={selectedUnitAddressId}
+                        onChange={(e) => setSelectedUnitAddressId(e.target.value)}
                     >
                         <option value="">--Select Unit Number--</option>
                         {Object.values(UnitNumbers).map((unit) => (
@@ -183,7 +221,7 @@ const AdminCondoFees = ({ currentYear }) => {
 
 
                 <button onClick={() => {
-                    submitPaymentUpdate(selectedMonth, payFrequency, paymentStatus, selectedUnit);
+                    submitPaymentUpdate(selectedMonth, payFrequency, paymentStatus, selectedUnitAddressId);
                     window.location.reload();
                 }}>
                     Submit
@@ -192,15 +230,15 @@ const AdminCondoFees = ({ currentYear }) => {
 
             <div className="unit-info-container">
                 <div>
-                    <label htmlFor="column-select">Owner name: 'data here'</label>
+                    <label htmlFor="column-select">Owner name: {ownerInfo.name}</label>
                 </div>
 
                 <div>
-                    <label htmlFor="column-select">Owner email: 'data here'</label>
+                    <label htmlFor="column-select">Owner email: {ownerInfo.email}</label>
                 </div>
 
                 <div>
-                    <label htmlFor="column-select">Owner phone numer: 'data here'</label>
+                    <label htmlFor="column-select">Owner phone numer: {ownerInfo.number}</label>
                 </div>
 
                 <div>
