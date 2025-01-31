@@ -18,8 +18,8 @@ const HotWaterTankReplacement = () => {
                     </thead>
                     <tbody>
                         {Object.values(UnitNumbers).map((unit) => (
-                            <tr key={unit}>
-                                <td>{unit}</td>
+                            <tr key={unit.value}>
+                                <td>{unit.label}</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>

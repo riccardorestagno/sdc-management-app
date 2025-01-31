@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import distinct
 from sqlalchemy.orm import Session
 from server.database.session import get_db
 from server.database.models import Unit, Payment
-from server.schemas.payment import PaymentUpdate
+from server.schemas.payment import InitializeFiscalYearRequest, PaymentUpdateRequest
 from server.enums.payment import PayFrequency
 
 router = APIRouter()
@@ -32,8 +34,76 @@ def get_payments(year: int, db: Session = Depends(get_db)):
     ]
 
 
+@router.post("/{year}/init")
+def initialize_fiscal_year(
+    year: int,
+    request: InitializeFiscalYearRequest,
+    db: Session = Depends(get_db)
+):
+    """Create or modify the current or future fiscal year based on the previous year's data."""
+    current_year = datetime.now().year
+
+    # Ensure the provided year is current or future
+    if year < current_year:
+        raise HTTPException(status_code=400, detail="Cannot create or modify past fiscal years")
+
+    previous_year = year - 1
+    previous_payments = db.query(Payment).filter(Payment.year == previous_year).all()
+
+    if not previous_payments:
+        raise HTTPException(status_code=404, detail=f"No payments found for {previous_year}")
+
+    existing_payments = db.query(Payment).filter(Payment.year == year).all()
+
+    new_payments = []
+    for payment in previous_payments:
+        updated_amount_owed = round(payment.amount_owed * (1 + request.percent_increase / 100), 2)
+
+        # If payment for the unit already exists in the new year, update it
+        existing_payment = next((p for p in existing_payments if p.unit_id == payment.unit_id), None)
+        if existing_payment:
+            existing_payment.amount_owed = updated_amount_owed
+        else:
+            new_payments.append(Payment(
+                unit_id=payment.unit_id,
+                year=year,
+                amount_owed=updated_amount_owed,
+                amount_paid=0,  # New fiscal year starts with no payments made
+                special_contribution_paid=0
+            ))
+
+    # Save new records
+    db.add_all(new_payments)
+    db.commit()
+
+    return {"message": f"Fiscal year {year} created/updated with a {request.percent_increase}% increase"}
+
+
+@router.delete("/{year}")
+def delete_fiscal_year(year: int, db: Session = Depends(get_db)):
+    """Delete a fiscal year, only if it is in the future."""
+    current_year = datetime.now().year
+
+    if year <= current_year:
+        raise HTTPException(status_code=400, detail="Cannot delete past or current fiscal years")
+
+    # Check if the year exists
+    payments_to_delete = db.query(Payment).filter(Payment.year == year).all()
+
+    if not payments_to_delete:
+        raise HTTPException(status_code=404, detail=f"No payments found for fiscal year {year}")
+
+    # Delete records
+    for payment in payments_to_delete:
+        db.delete(payment)
+
+    db.commit()
+
+    return {"message": f"Fiscal year {year} deleted successfully"}
+
+
 @router.put("/{year}")
-def update_payments(year: int, payment: PaymentUpdate, db: Session = Depends(get_db)):
+def update_payments(year: int, payment: PaymentUpdateRequest, db: Session = Depends(get_db)):
     """Update payment record."""
     unit = db.query(Unit).filter(Unit.address == payment.address).one_or_none()
     if not unit:
