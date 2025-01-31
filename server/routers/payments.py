@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import distinct
+from sqlalchemy.sql import exists
 from sqlalchemy.orm import Session
 from server.database.session import get_db
 from server.database.models import Unit, Payment
@@ -53,24 +54,21 @@ def initialize_fiscal_year(
     if not previous_payments:
         raise HTTPException(status_code=404, detail=f"No payments found for {previous_year}")
 
-    existing_payments = db.query(Payment).filter(Payment.year == year).all()
+    existing_payments = db.query(exists().where(Payment.year == year)).scalar()
+    if existing_payments:
+        raise HTTPException(status_code=400, detail="Fiscal year already exists. Delete fiscal year in order to create a new one.")
 
     new_payments = []
     for payment in previous_payments:
         updated_amount_owed = round(payment.amount_owed * (1 + request.percent_increase / 100), 2)
 
-        # If payment for the unit already exists in the new year, update it
-        existing_payment = next((p for p in existing_payments if p.unit_id == payment.unit_id), None)
-        if existing_payment:
-            existing_payment.amount_owed = updated_amount_owed
-        else:
-            new_payments.append(Payment(
-                unit_id=payment.unit_id,
-                year=year,
-                amount_owed=updated_amount_owed,
-                amount_paid=0,  # New fiscal year starts with no payments made
-                special_contribution_paid=0
-            ))
+        new_payments.append(Payment(
+            unit_id=payment.unit_id,
+            year=year,
+            amount_owed=updated_amount_owed,
+            amount_paid=0,  # New fiscal year starts with no payments made
+            special_contribution_paid=0
+        ))
 
     # Save new records
     db.add_all(new_payments)
