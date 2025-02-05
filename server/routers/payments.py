@@ -5,7 +5,7 @@ from sqlalchemy import distinct
 from sqlalchemy.sql import exists
 from sqlalchemy.orm import Session
 from server.database.session import get_db
-from server.database.models import Unit, Payment
+from server.database.models import Unit, Payment, FiscalYear
 from server.schemas.payment import InitializeFiscalYearRequest, PaymentUpdateRequest
 from server.enums.payment import PayFrequency
 
@@ -70,6 +70,11 @@ def initialize_fiscal_year(
             special_contribution_paid=0
         ))
 
+    new_payments.append(FiscalYear(
+        year=year,
+        special_contribution_amount=request.special_contribution_amount,
+    ))
+
     # Save new records
     db.add_all(new_payments)
     db.commit()
@@ -87,13 +92,17 @@ def delete_fiscal_year(year: int, db: Session = Depends(get_db)):
 
     # Check if the year exists
     payments_to_delete = db.query(Payment).filter(Payment.year == year).all()
+    fiscal_year_to_delete = db.query(FiscalYear).filter(FiscalYear.year == year).one_or_none()
 
-    if not payments_to_delete:
+    if not payments_to_delete and not fiscal_year_to_delete:
         raise HTTPException(status_code=404, detail=f"No payments found for fiscal year {year}")
 
     # Delete records
     for payment in payments_to_delete:
         db.delete(payment)
+
+    if fiscal_year_to_delete:
+        db.delete(fiscal_year_to_delete)
 
     db.commit()
 

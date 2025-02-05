@@ -33,7 +33,7 @@ def models(db: Database):
         owner = relationship("Owner", back_populates="unit")
 
     class Owner(db.Base):
-        __tablename__ = "owner"
+        __tablename__ = "owners"
         id = Column(Integer, primary_key=True, index=True)
         unit_id = Column(Integer, ForeignKey("units.id"), nullable=False)
         name = Column(String, unique=True, nullable=False)
@@ -52,6 +52,12 @@ def models(db: Database):
         special_contribution_paid = Column(Boolean, default=False)
         unit = relationship("Unit", back_populates="payments")
 
+    class FiscalYear(db.Base):
+        __tablename__ = "fiscal_years"
+        id = Column(Integer, primary_key=True, index=True)
+        year = Column(String, nullable=False)
+        special_contribution_amount = Column(Float, nullable=False)
+
     db.Base.metadata.create_all(bind=db.engine)  # Ensure tables are created
 
-    return Unit, Owner, Payment  # Return the models so they can be used elsewhere
+    return Unit, Owner, Payment, FiscalYear  # Return the models so they can be used elsewhere

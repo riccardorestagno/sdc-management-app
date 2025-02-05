@@ -4,7 +4,7 @@ import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
-import { getPayments, getOwnerInfoByUnitAddressId, getYears, initializeFiscalYear, deleteFiscalYear, updatePayment } from "../../../api";
+import { getPayments, getOwnerInfoByUnitAddressId, getYears, initializeFiscalYear, deleteFiscalYear, updatePayment, getFiscalYear } from "../../../api";
 import NewFiscalYear from '../new-fiscal-year-component/new-fiscal-year-component';
 
 const AdminCondoFees = ({ currentYear }) => {
@@ -15,6 +15,7 @@ const AdminCondoFees = ({ currentYear }) => {
   const [selectedMonth, setSelectedMonth] = useState(currentMonth.value);
   const [payFrequency, setPayFrequency] = useState(PayFrequencyType.MONTHLY.value);
   const [paymentStatus, setPaymentStatus] = useState(PaymentStatusType.PAID);
+  const [specialContributionAmount, setSpecialContributionAmount] = useState(0);
 
   const [year, setCurrentYear] = useState(currentYear); // Default to year in component input
   const [payments, setPayments] = useState([]);
@@ -30,8 +31,10 @@ const AdminCondoFees = ({ currentYear }) => {
     const fetchPayments = async () => {
       try {
         setLoading(true);
-        const data = await getPayments(year);
-        setPayments(data);
+        const paymentsData = await getPayments(year);
+        const specialContributionAmount = (await getFiscalYear(year)).special_contribution_amount;
+        setPayments(paymentsData);
+        setSpecialContributionAmount(specialContributionAmount);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -81,9 +84,10 @@ const AdminCondoFees = ({ currentYear }) => {
     await updatePayment(year, paymentData)
   };
 
-  const initializeNewFiscalYear = async (percentIncrease) => {
+  const initializeNewFiscalYear = async (percentIncrease, specialContributionAmount) => {
     const newFiscalYearData = {
       "percent_increase": percentIncrease,
+      "special_contribution_amount": specialContributionAmount
     };
     await initializeFiscalYear(year, newFiscalYearData)
   };
@@ -94,8 +98,8 @@ const AdminCondoFees = ({ currentYear }) => {
   }
 
 
-  const handleNewFiscalYearSubmit = async (percentIncrease) => {
-    await initializeNewFiscalYear(percentIncrease);
+  const handleNewFiscalYearSubmit = async (percentIncrease, specialContributionAmount) => {
+    await initializeNewFiscalYear(percentIncrease, specialContributionAmount);
   };
 
   const handleDeleteFutureFiscalYear = async () => {
@@ -168,7 +172,7 @@ const AdminCondoFees = ({ currentYear }) => {
                   <td key={PayFrequencyType.SPECIAL_CONTRIBUTION.value}
                     className={payment.special_contribution_paid ? 'paid' : 'unpaid'}
                   >
-                    $450
+                    ${(Math.round(specialContributionAmount * 100) / 100).toFixed(2)}
                   </td>
                 </tr>
               ))}

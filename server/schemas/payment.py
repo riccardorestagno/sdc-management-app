@@ -4,6 +4,7 @@ from server.enums.payment import PayFrequency, Month
 
 class InitializeFiscalYearRequest(BaseModel):
     percent_increase: float
+    special_contribution_amount: int
 
 
 class PaymentUpdateRequest(BaseModel):

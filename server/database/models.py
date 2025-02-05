@@ -1,4 +1,4 @@
 from server.database.database import Database, models
 
 database = Database()
-Unit, Owner, Payment = models(database)
+Unit, Owner, Payment, FiscalYear = models(database)

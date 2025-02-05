@@ -45,6 +45,19 @@ export const getOwnerInfoByUnitAddressId = async (unit_address_id) => {
   }
 };
 
+export const getFiscalYear = async (year) => {
+  try {
+    if (!year) {
+      return {};
+    }
+    const response = await axios.get(`${API_BASE_URL}/fiscal-years/year/${year}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching fiscal year data:", error);
+    throw error;
+  }
+};
+
 
 export const updatePayment = async (year, paymentData) => {
   try {
