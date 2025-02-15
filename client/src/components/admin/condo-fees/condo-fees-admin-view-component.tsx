@@ -6,8 +6,10 @@ import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
 import { getPayments, getOwnerInfoByUnitAddressId, getYears, initializeFiscalYear, deleteFiscalYear, updatePayment, getFiscalYear } from "../../../api";
 import NewFiscalYear from '../new-fiscal-year-component/new-fiscal-year-component';
+import EnumOption from '../../../enums/enumOption';
+import { OwnerInfo, Payment } from './types';
 
-const AdminCondoFees = ({ currentYear }) => {
+const AdminCondoFees = ({ currentYear }: { currentYear: number }) => {
 
   const currentMonthLabel = new Date().toLocaleString("default", { month: "long" });
   const currentMonth = Object.values(Months).find(month => month.label === currentMonthLabel);
@@ -19,13 +21,15 @@ const AdminCondoFees = ({ currentYear }) => {
 
   const [year, setCurrentYear] = useState(currentYear); // Default to year in component input
   const [payments, setPayments] = useState([]);
-  const [ownerInfo, setOwnerInfo] = useState([]);
+  const [ownerInfo, setOwnerInfo] = useState<OwnerInfo>();
   const [selectedUnitAddressId, setSelectedUnitAddressId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
 
   let [years, setYears] = useState([]);
+
+
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -74,17 +78,17 @@ const AdminCondoFees = ({ currentYear }) => {
     fetchYears();
   }, []);
 
-  const submitPaymentUpdate = async (selectedMonth, payFrequency, paymentStatus, selectedUnitAddressId) => {
+  const submitPaymentUpdate = async (selectedMonth: number, payFrequency: number, paymentStatus: string, selectedUnitAddressId: string) => {
     const paymentData = {
       "address": selectedUnitAddressId,
       "pay_frequency": payFrequency,
       "month": selectedMonth,
-      "paid": paymentStatus == PaymentStatusType.PAID
+      "paid": paymentStatus === PaymentStatusType.PAID
     };
     await updatePayment(year, paymentData)
   };
 
-  const initializeNewFiscalYear = async (percentIncrease, specialContributionAmount) => {
+  const initializeNewFiscalYear = async (percentIncrease: any, specialContributionAmount: any) => {
     const newFiscalYearData = {
       "percent_increase": percentIncrease,
       "special_contribution_amount": specialContributionAmount
@@ -98,7 +102,7 @@ const AdminCondoFees = ({ currentYear }) => {
   }
 
 
-  const handleNewFiscalYearSubmit = async (percentIncrease, specialContributionAmount) => {
+  const handleNewFiscalYearSubmit = async (percentIncrease: any, specialContributionAmount: any) => {
     await initializeNewFiscalYear(percentIncrease, specialContributionAmount);
   };
 
@@ -118,14 +122,14 @@ const AdminCondoFees = ({ currentYear }) => {
             <thead>
               <tr>
                 <th>
-                  <select value={year} onChange={(e) => setCurrentYear(e.target.value)}>
+                  <select value={year} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCurrentYear(Number((e.target as HTMLSelectElement).value))}>
                     {years.map((year) => (
                       <option key={year} value={year}>
                         {year}
                       </option>
                     ))}
                   </select>
-                  {nextYear == year &&
+                  {nextYear === year &&
                     <NewFiscalYear exists={payments.length !== 0} onSubmit={handleNewFiscalYearSubmit} onDelete={handleDeleteFutureFiscalYear} />
                   }
                 </th>
@@ -136,10 +140,10 @@ const AdminCondoFees = ({ currentYear }) => {
               </tr>
             </thead>
             <tbody>
-              {payments.map((payment) => (
+              {payments.map((payment: Payment) => (
                 <tr key={payment.address}>
                   <td>
-                    <button onClick={() => setSelectedUnitAddressId(UnitNumbers[payment.address].value)}
+                    <button onClick={() => setSelectedUnitAddressId(String(UnitNumbers[payment.address].value))}
                       style={{
                         background: "none",
                         border: "none",
@@ -151,19 +155,21 @@ const AdminCondoFees = ({ currentYear }) => {
                         width: "100%",
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.transform = "scale(1.05)";
-                        e.target.style.color = "#007bff";
+                        const target = e.target as HTMLElement;
+                        target.style.transform = "scale(1.05)";
+                        target.style.color = "#007bff";
                       }}
                       onMouseLeave={(e) => {
-                        e.target.style.transform = "scale(1)";
-                        e.target.style.color = "inherit";
+                        const target = e.target as HTMLElement;
+                        target.style.transform = "scale(1)";
+                        target.style.color = "inherit";
                       }}
                     >
                       {UnitNumbers[payment.address].label}
                     </button>
                   </td>
                   {Object.values(Months).map((month, index) => (
-                    <td key={month}
+                    <td key={month.value}
                       className={payment.months_paid > index ? 'paid' : 'unpaid'}
                     >
                       ${(Math.round(payment.monthly_payment * 100) / 100).toFixed(2)}
@@ -192,7 +198,7 @@ const AdminCondoFees = ({ currentYear }) => {
                 onChange={(e) => setSelectedUnitAddressId(e.target.value)}
               >
                 <option value="">--Select Unit Number--</option>
-                {Object.values(UnitNumbers).map((unit) => (
+                {Object.values(UnitNumbers).map((unit: EnumOption) => (
                   <option key={unit.value} value={unit.value}>
                     {unit.label}
                   </option>
@@ -205,17 +211,17 @@ const AdminCondoFees = ({ currentYear }) => {
               <select
                 id="column-select"
                 value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedMonth(Number(e.target.value))}
               >
                 {Object.values(Months)
                   .filter((month) => {
-                    if (payFrequency == PayFrequencyType.ANNUALLY.value) return month.value == 0;
-                    if (payFrequency == PayFrequencyType.QUARTERLY.value) return [0, 3, 6, 9].includes(month.value);
-                    if (payFrequency == PayFrequencyType.SPECIAL_CONTRIBUTION.value) return false;
+                    if (payFrequency === PayFrequencyType.ANNUALLY.value) return month.value === 0;
+                    if (payFrequency === PayFrequencyType.QUARTERLY.value) return [0, 3, 6, 9].includes(Number(month.value));
+                    if (payFrequency === PayFrequencyType.SPECIAL_CONTRIBUTION.value) return false;
                     return true; // Show all months by default
                   })
                   .map((month) => (
-                    <option key={month.value} value={month.value} disabled={payFrequency == PayFrequencyType.ANNUALLY.value || payFrequency == PayFrequencyType.SPECIAL_CONTRIBUTION}>
+                    <option key={month.value} value={month.value} disabled={payFrequency === PayFrequencyType.ANNUALLY.value || payFrequency === PayFrequencyType.SPECIAL_CONTRIBUTION.value}>
                       {month.label}
                     </option>
                   ))}
@@ -227,7 +233,7 @@ const AdminCondoFees = ({ currentYear }) => {
               <select
                 id="row-select"
                 value={payFrequency}
-                onChange={(e) => setPayFrequency(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPayFrequency(Number(e.target.value))}
               >
                 {Object.values(PayFrequencyType).map((type) => (
                   <option key={type.value} value={type.value}>
@@ -255,7 +261,7 @@ const AdminCondoFees = ({ currentYear }) => {
 
 
             <button onClick={() => {
-              submitPaymentUpdate(selectedMonth, payFrequency, paymentStatus, selectedUnitAddressId);
+              submitPaymentUpdate(Number(selectedMonth), Number(payFrequency), paymentStatus, selectedUnitAddressId);
               window.location.reload();
             }}>
               Submit

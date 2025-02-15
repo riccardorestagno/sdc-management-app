@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import './hot-water-tank-inventory-component.css';
 import UnitNumbers from '../../../enums/unitNumbers';
 

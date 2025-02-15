@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "target": "es5", // Target ECMAScript version (use ES5 for compatibility with older browsers)
+        "lib": [
+            "dom",
+            "es6",
+            "esnext"
+        ], // Include DOM, ES6 and newer JS features
+        "allowJs": true, // Allow JavaScript files to be compiled by TypeScript
+        "jsx": "react-jsx", // Use the new JSX transform (React 17+), "react" for older versions
+        "strict": false, // Enable all strict type-checking options
+        "esModuleInterop": true, // Ensures compatibility between CommonJS and ES modules
+        "moduleResolution": "node", // Resolve modules using Node's resolution strategy
+        "module": "esnext", // Use the latest ECMAScript module system
+        "skipLibCheck": true, // Skip type checking of declaration files to improve build speed
+        "forceConsistentCasingInFileNames": true, // Ensures file names are case-consistent
+        "resolveJsonModule": true, // Allow importing JSON files as modules
+        "noEmit": false, // Ensure TypeScript emits output files (JS files)
+        "isolatedModules": true, // Treat each file as a separate module, needed for React
+        "noUnusedLocals": true, // Warns about unused local variables
+        "noUnusedParameters": true, // Warns about unused parameters in functions
+        "noImplicitAny": true, // Disallow variables implicitly having `any` type
+        "strictFunctionTypes": false, // Strict function type checking
+        "strictNullChecks": false // Strict handling of null and undefined values
+    },
+    "include": [
+        "src/**/*" // Include all files in the src directory
+    ],
+    "exclude": [
+        "node_modules", // Exclude node_modules from the compilation
+        "build", // Exclude build/compiled files
+        "dist"
+    ]
+}

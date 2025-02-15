@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-const NewFiscalYear = ({ exists, onSubmit, onDelete }) => {
+const NewFiscalYear = ({ exists, onSubmit, onDelete }: { exists: boolean, onSubmit: any, onDelete: any }) => {
   const [percentIncrease, setPercentIncrease] = useState("");
   const [specialContribution, setSpecialContribution] = useState("");
 
 
-  const handlePercentIncreaseChange = (e) => {
+  const handlePercentIncreaseChange = (e: { target: { value: any; }; }) => {
     const value = e.target.value;
     if (/^\d*$/.test(value)) {
       setPercentIncrease(value);
     }
   };
 
-  const handleSpecialContributionChange = (e) => {
+  const handleSpecialContributionChange = (e: { target: { value: any; }; }) => {
     const value = e.target.value;
     if (/^\d*$/.test(value)) {
       setSpecialContribution(value);
