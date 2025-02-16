@@ -1,4 +1,4 @@
-import EnumOption from "./enumOption";
+import { EnumOption } from "./enumOption";
 
 export const Months: { [key: string]: EnumOption } = {
     JANUARY: { value: 0, label: 'January' },

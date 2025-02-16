@@ -1,4 +1,4 @@
-import EnumOption from "./enumOption";
+import { EnumOption } from "./enumOption";
 
 export const PayFrequencyType: { [key: string]: EnumOption } = {
     MONTHLY: { value: 1, label: 'Monthly' },

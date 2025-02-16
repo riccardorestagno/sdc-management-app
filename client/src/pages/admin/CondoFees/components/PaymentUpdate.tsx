@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import EnumOption from '../../../../enums/enumOption';
+import { EnumOption } from '../../../../enums/enumOption';
 import PayFrequencyType from '../../../../enums/payFrequencyType';
 import UnitNumbers from '../../../../enums/unitNumbers';
 import Months from '../../../../enums/months';
@@ -13,7 +13,10 @@ interface PaymentUpdateProps {
 }
 
 const PaymentUpdate: React.FC<PaymentUpdateProps> = ({ selectedYear, selectedUnitAddressId, setSelectedUnitAddressId }) => {
-    const [selectedMonth, setSelectedMonth] = useState<number>(0);
+    const currentMonthLabel = new Date().toLocaleString("default", { month: "long" });
+    const currentMonth = Object.values(Months).find(month => month.label === currentMonthLabel);
+
+    const [selectedMonth, setSelectedMonth] = useState<number>(Number(currentMonth.value));
     const [payFrequency, setPayFrequency] = useState<number>(Number(PayFrequencyType.MONTHLY.value));
     const [paymentStatus, setPaymentStatus] = useState<string>(PaymentStatusType.PAID);
 

@@ -1,4 +1,4 @@
-import EnumOption from "./enumOption";
+import { EnumOption } from "./enumOption";
 
 export const UnitNumbers: { [key: string]: EnumOption } = {
     RR101: { value: 'RR101', label: '14351-101' },
