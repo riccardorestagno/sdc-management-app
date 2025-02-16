@@ -4,7 +4,7 @@ import Months from '../../../enums/months';
 import PayFrequencyType from '../../../enums/payFrequencyType';
 import PaymentStatusType from '../../../enums/paymentStatusType';
 import UnitNumbers from '../../../enums/unitNumbers';
-import { getPayments, getOwnerInfoByUnitAddressId, getYears, initializeFiscalYear, deleteFiscalYear, updatePayment, getFiscalYear } from "../../../api";
+import { getPayments, getOwnerInfoByUnitAddressId, getYears, initializeFiscalYear, deleteFiscalYear, updatePayment, getFiscalYear } from "../../../services/api";
 import NewFiscalYear from '../new-fiscal-year-component/new-fiscal-year-component';
 import EnumOption from '../../../enums/enumOption';
 import { OwnerInfo, Payment } from './types';

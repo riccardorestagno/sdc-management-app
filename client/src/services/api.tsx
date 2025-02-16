@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
-export const getUnitInfo = async () => {
+export const getUnitInfo = async (): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/units`);
     return response.data;
@@ -12,7 +12,7 @@ export const getUnitInfo = async () => {
   }
 };
 
-export const getYears = async () => {
+export const getYears = async (): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/payments/years`);
     return response.data;
@@ -22,7 +22,7 @@ export const getYears = async () => {
   }
 };
 
-export const getPayments = async (year) => {
+export const getPayments = async (year: number): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/payments/${year}`);
     return response.data;
@@ -32,7 +32,7 @@ export const getPayments = async (year) => {
   }
 };
 
-export const getOwnerInfoByUnitAddressId = async (unit_address_id) => {
+export const getOwnerInfoByUnitAddressId = async (unit_address_id: string | null): Promise<any> => {
   try {
     if (!unit_address_id) {
       return {};
@@ -45,7 +45,7 @@ export const getOwnerInfoByUnitAddressId = async (unit_address_id) => {
   }
 };
 
-export const getFiscalYear = async (year) => {
+export const getFiscalYear = async (year: number): Promise<any> => {
   try {
     if (!year) {
       return {};
@@ -58,8 +58,7 @@ export const getFiscalYear = async (year) => {
   }
 };
 
-
-export const updatePayment = async (year, paymentData) => {
+export const updatePayment = async (year: number, paymentData: object): Promise<any> => {
   try {
     const response = await axios.put(
       `${API_BASE_URL}/payments/${year}`,
@@ -78,7 +77,7 @@ export const updatePayment = async (year, paymentData) => {
   }
 };
 
-export const initializeFiscalYear = async (year, fiscalYearData) => {
+export const initializeFiscalYear = async (year: number, fiscalYearData: object): Promise<any> => {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/payments/${year}/init`,
@@ -97,7 +96,7 @@ export const initializeFiscalYear = async (year, fiscalYearData) => {
   }
 };
 
-export const deleteFiscalYear = async (year) => {
+export const deleteFiscalYear = async (year: number): Promise<any> => {
   try {
     const response = await axios.delete(`${API_BASE_URL}/payments/${year}`);
     console.log("Fiscal year deleted successfully:", response.data);
