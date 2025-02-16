@@ -1,9 +1,26 @@
 import { useState } from "react";
+import { deleteFiscalYear, initializeFiscalYear } from "../../../../services/api";
 
-const NewFiscalYear = ({ exists, onSubmit, onDelete }: { exists: boolean, onSubmit: any, onDelete: any }) => {
+const NewFiscalYear = ({ exists, year }: { exists: boolean, year: number }) => {
   const [percentIncrease, setPercentIncrease] = useState("");
   const [specialContribution, setSpecialContribution] = useState("");
 
+
+  const initializeNewFiscalYear = async (percentIncrease: any, specialContributionAmount: any) => {
+    const newFiscalYearData = {
+      "percent_increase": percentIncrease,
+      "special_contribution_amount": specialContributionAmount
+    };
+    await initializeFiscalYear(year, newFiscalYearData)
+  };
+
+  const handleNewFiscalYearSubmit = async (percentIncrease: any, specialContributionAmount: any) => {
+    await initializeNewFiscalYear(percentIncrease, specialContributionAmount);
+  };
+
+  const handleDeleteFutureFiscalYear = async () => {
+    await deleteFiscalYear(year);
+  };
 
   const handlePercentIncreaseChange = (e: { target: { value: any; }; }) => {
     const value = e.target.value;
@@ -42,9 +59,9 @@ const NewFiscalYear = ({ exists, onSubmit, onDelete }: { exists: boolean, onSubm
         )}
         <div className="flex justify-end space-x-2">
           {exists ? (
-            <button onClick={() => onDelete()} className="px-4 py-2 bg-blue-500 text-white rounded">Delete</button>
+            <button onClick={() => handleDeleteFutureFiscalYear()} className="px-4 py-2 bg-blue-500 text-white rounded">Delete</button>
           ) : (
-            <button onClick={() => onSubmit(percentIncrease, specialContribution)} className="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+            <button onClick={() => handleNewFiscalYearSubmit(percentIncrease, specialContribution)} className="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
           )}
         </div>
       </div>

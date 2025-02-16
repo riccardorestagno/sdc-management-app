@@ -1,7 +1,7 @@
-import './hot-water-tank-inventory-component.css';
 import UnitNumbers from '../../../enums/unitNumbers';
+import './WaterHeaterInfo.css';
 
-const HotWaterTankReplacement = () => {
+const WaterHeaterInfo = () => {
 
     return (
         <div className="excel-container">
@@ -31,4 +31,4 @@ const HotWaterTankReplacement = () => {
     );
 };
 
-export default HotWaterTankReplacement;
+export default WaterHeaterInfo;

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import './App.css'; // Create this file to style your app
-import HotWaterTankReplacement from './components/admin/hot-water-tank-inventory-component/hot-water-tank-inventory-component';
+import './App.css';
 import { AdminTabs } from './enums/adminTabs';
 import { CoOwnerTabs } from './enums/coOwnerTabs';
 import { AccessType } from './enums/accessType';
-import AdminCondoFees from './components/admin/condo-fees/condo-fees-admin-view-component';
+import CondoFees from './pages/admin/CondoFees/CondoFees';
+import WaterHeaterInfo from './pages/admin/WaterHeaterInfo/WaterHeaterInfo';
 
 const App = () => {
   // State for active column and row tabs
@@ -23,11 +23,11 @@ const App = () => {
       case AccessType.ADMIN:
         switch (rowTabs[activeColumn][activeRow[activeColumn]]) {
           case AdminTabs.CONDO_FEES:
-            return <AdminCondoFees currentYear={2025} />;
+            return <CondoFees currentYear={2025} />;
           // case AdminTabs.BANK_ACCOUNT:
           //   return <AdminBankAccount />;
           case AdminTabs.TANK_REPLACEMENT:
-            return <HotWaterTankReplacement />;
+            return <WaterHeaterInfo />;
           default:
             return <p>No details available for this row.</p>;
         }
