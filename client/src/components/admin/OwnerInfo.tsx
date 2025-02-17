@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getOwnerInfoByUnitAddressId } from "../../../../services/api";
+import { getOwnerInfoByUnitAddressId } from "../../services/api";
 
-export interface OwnerInfoProps {
+interface OwnerInfoProps {
     name: string;
     email: string;
     number: string;

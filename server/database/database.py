@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, ForeignKey, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -29,7 +29,9 @@ def models(db: Database):
         __tablename__ = "units"
         id = Column(Integer, primary_key=True, index=True)
         address = Column(String, unique=True, nullable=False)
-        payments = relationship("Payment", back_populates="unit")
+        last_water_heater_replacement = Column(Date, nullable=True)
+        has_tankless_heater = Column(Boolean, default=False)
+        payment_records = relationship("Payment", back_populates="unit")
         owner = relationship("Owner", back_populates="unit")
 
     class Owner(db.Base):
@@ -50,7 +52,7 @@ def models(db: Database):
         amount_owed = Column(Float, nullable=False)
         amount_paid = Column(Float, nullable=False)
         special_contribution_paid = Column(Boolean, default=False)
-        unit = relationship("Unit", back_populates="payments")
+        unit = relationship("Unit", back_populates="payment_records")
 
     class FiscalYear(db.Base):
         __tablename__ = "fiscal_years"

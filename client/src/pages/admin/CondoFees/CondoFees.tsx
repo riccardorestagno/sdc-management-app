@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './CondoFees.css';
-import OwnerInfo from './components/OwnerInfo';
+import OwnerInfo from '../../../components/admin/OwnerInfo';
 import PaymentUpdate from './components/PaymentUpdate';
 import PaymentTable from './components/PaymentTable';
 

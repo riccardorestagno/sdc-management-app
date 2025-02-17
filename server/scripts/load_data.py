@@ -8,7 +8,7 @@ def load_data_from_json(file_path):
 
     # Initialize the database schema
     db = Database("sqlite:///../data/condo.db")
-    Unit, Owner, Payment = models(db)
+    Unit, Owner, Payment, FiscalYear = models(db)
     db.init_db()
 
     # Create a new session

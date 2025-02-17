@@ -4,6 +4,7 @@ import Months from '../../../../enums/months';
 import PayFrequencyType from '../../../../enums/payFrequencyType';
 import UnitNumbers from '../../../../enums/unitNumbers';
 import { getFiscalYear, getPayments, getYears } from '../../../../services/api';
+import SelectableAddressButton from '../../../../components/admin/SelectableAddressButton';
 
 interface PaymentTableProps {
     selectedYear: number;
@@ -99,31 +100,10 @@ const PaymentTable: React.FC<PaymentTableProps> = ({
                         {payments.map((payment) => (
                             <tr key={payment.address}>
                                 <td>
-                                    <button
+                                    <SelectableAddressButton
+                                        label={UnitNumbers[payment.address].label}
                                         onClick={() => setSelectedUnitAddressId(String(UnitNumbers[payment.address].value))}
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            padding: 0,
-                                            textAlign: 'left',
-                                            fontSize: 'inherit',
-                                            color: 'inherit',
-                                            width: '100%',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            const target = e.target as HTMLElement;
-                                            target.style.transform = 'scale(1.05)';
-                                            target.style.color = '#007bff';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            const target = e.target as HTMLElement;
-                                            target.style.transform = 'scale(1)';
-                                            target.style.color = 'inherit';
-                                        }}
-                                    >
-                                        {UnitNumbers[payment.address].label}
-                                    </button>
+                                    />
                                 </td>
                                 {Object.values(Months).map((month, index) => (
                                     <td key={month.value} className={payment.months_paid > index ? 'paid' : 'unpaid'}>
