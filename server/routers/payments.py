@@ -12,12 +12,6 @@ from server.enums.payment import PayFrequency
 router = APIRouter()
 
 
-@router.get("/years", response_model=list[int])
-def get_unique_years(db: Session = Depends(get_db)):
-    years = db.query(distinct(Payment.year)).all()
-    return [year[0] for year in years]
-
-
 @router.get("/{year}")
 def get_payments(year: int, db: Session = Depends(get_db)):
     """Fetch payment data for a specific year."""

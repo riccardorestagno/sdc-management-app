@@ -9,14 +9,22 @@ const CondoFees = ({ currentYear }: { currentYear: number }) => {
   const [selectedUnitAddressId, setSelectedUnitAddressId] = useState('');
 
   return (
-    <div>
-      <PaymentTable selectedYear={selectedYear} setSelectedYear={setSelectedYear} setSelectedUnitAddressId={setSelectedUnitAddressId} />
+    <div style={{ display: "flex", gap: "8px" }}>
+      <PaymentTable
+        selectedYear={selectedYear}
+        setSelectedYear={setSelectedYear}
+        setSelectedUnitAddressId={setSelectedUnitAddressId}
+      />
 
       {selectedYear === currentYear && (
-        <>
-          <PaymentUpdate selectedYear={selectedYear} selectedUnitAddressId={selectedUnitAddressId} setSelectedUnitAddressId={setSelectedUnitAddressId} />
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "18px" }}>
+          <PaymentUpdate
+            selectedYear={selectedYear}
+            selectedUnitAddressId={selectedUnitAddressId}
+            setSelectedUnitAddressId={setSelectedUnitAddressId}
+          />
           <OwnerInfo selectedUnitAddressId={selectedUnitAddressId} />
-        </>
+        </div>
       )}
     </div>
 

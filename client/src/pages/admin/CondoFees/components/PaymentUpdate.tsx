@@ -27,80 +27,84 @@ const PaymentUpdate: React.FC<PaymentUpdateProps> = ({ selectedYear, selectedUni
             "month": selectedMonth,
             "paid": paymentStatus === PaymentStatusType.PAID
         };
-        await updatePayment(selectedYear, paymentData)
+        await updatePayment(selectedYear, paymentData);
     };
 
     return (
-        <div className="widget">
-            <div>
-                <label htmlFor="name-select">Unit Number:</label>
-                <select
-                    id="name-select"
-                    value={selectedUnitAddressId}
-                    onChange={(e) => setSelectedUnitAddressId(e.target.value)}
-                >
-                    <option value="">--Select Unit Number--</option>
-                    {Object.values(UnitNumbers).map((unit: EnumOption) => (
-                        <option key={unit.value} value={unit.value}>
-                            {unit.label}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div>
-                <label htmlFor="column-select">Month:</label>
-                <select
-                    id="column-select"
-                    value={selectedMonth}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedMonth(Number(e.target.value))}
-                >
-                    {Object.values(Months)
-                        .filter((month) => {
-                            if (payFrequency === PayFrequencyType.ANNUALLY.value) return month.value === 0;
-                            if (payFrequency === PayFrequencyType.QUARTERLY.value) return [0, 3, 6, 9].includes(Number(month.value));
-                            if (payFrequency === PayFrequencyType.SPECIAL_CONTRIBUTION.value) return false;
-                            return true; // Show all months by default
-                        })
-                        .map((month) => (
-                            <option key={month.value} value={month.value} disabled={payFrequency === PayFrequencyType.ANNUALLY.value || payFrequency === PayFrequencyType.SPECIAL_CONTRIBUTION.value}>
-                                {month.label}
+        <div className="payment-update">
+            <div className="row">
+                <div className="input-group">
+                    <label htmlFor="unit-select">Unit Number:</label>
+                    <select
+                        id="unit-select"
+                        value={selectedUnitAddressId}
+                        onChange={(e) => setSelectedUnitAddressId(e.target.value)}
+                    >
+                        <option value="">--Select Unit Number--</option>
+                        {Object.values(UnitNumbers).map((unit: EnumOption) => (
+                            <option key={unit.value} value={unit.value}>
+                                {unit.label}
                             </option>
                         ))}
-                </select>
+                    </select>
+                </div>
+
+                <div className="input-group">
+                    <label htmlFor="month-select">Month:</label>
+                    <select
+                        id="month-select"
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                    >
+                        {Object.values(Months)
+                            .filter((month) => {
+                                if (payFrequency === PayFrequencyType.ANNUALLY.value) return month.value === 0;
+                                if (payFrequency === PayFrequencyType.QUARTERLY.value) return [0, 3, 6, 9].includes(Number(month.value));
+                                if (payFrequency === PayFrequencyType.SPECIAL_CONTRIBUTION.value) return false;
+                                return true; // Show all months by default
+                            })
+                            .map((month) => (
+                                <option key={month.value} value={month.value} disabled={payFrequency === PayFrequencyType.ANNUALLY.value || payFrequency === PayFrequencyType.SPECIAL_CONTRIBUTION.value}>
+                                    {month.label}
+                                </option>
+                            ))}
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label htmlFor="row-select">Pay Frequency:</label>
-                <select
-                    id="row-select"
-                    value={payFrequency}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPayFrequency(Number(e.target.value))}
-                >
-                    {Object.values(PayFrequencyType).map((type: EnumOption) => (
-                        <option key={type.value} value={type.value}>
-                            {type.label}
-                        </option>
-                    ))}
-                </select>
+            <div className="row">
+                <div className="input-group">
+                    <label htmlFor="pay-frequency-select">Pay Frequency:</label>
+                    <select
+                        id="pay-frequency-select"
+                        value={payFrequency}
+                        onChange={(e) => setPayFrequency(Number(e.target.value))}
+                    >
+                        {Object.values(PayFrequencyType).map((type: EnumOption) => (
+                            <option key={type.value} value={type.value}>
+                                {type.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="input-group">
+                    <label htmlFor="status-select">Payment Status:</label>
+                    <select
+                        id="status-select"
+                        value={paymentStatus}
+                        onChange={(e) => setPaymentStatus(e.target.value)}
+                    >
+                        {Object.values(PaymentStatusType).map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label htmlFor="status-select">Payment Status:</label>
-                <select
-                    id="status-select"
-                    value={paymentStatus}
-                    onChange={(e) => setPaymentStatus(e.target.value)}
-                >
-                    {Object.values(PaymentStatusType).map((type) => (
-                        <option key={type} value={type}>
-                            {type}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <button
+            <button className="submit-payment-update-button"
                 onClick={() => {
                     submitPaymentUpdate(Number(selectedMonth), Number(payFrequency), paymentStatus, selectedUnitAddressId);
                     window.location.reload(); // Refresh the page after submitting

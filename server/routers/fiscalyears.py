@@ -1,9 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import distinct, desc
 from sqlalchemy.orm import Session
 from server.database.session import get_db
 from server.database.models import FiscalYear
 
 router = APIRouter()
+
+
+@router.get("/")
+def get_unique_years(db: Session = Depends(get_db)):
+    return db.query(FiscalYear).order_by(desc(FiscalYear.year)).all()
 
 
 @router.get("/{id}")

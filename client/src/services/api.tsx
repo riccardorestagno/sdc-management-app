@@ -12,10 +12,10 @@ export const getUnitInfoList = async (): Promise<any> => {
   }
 };
 
-export const getYears = async (): Promise<any> => {
+export const getYears = async (): Promise<number[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/payments/years`);
-    return response.data;
+    const response = await axios.get(`${API_BASE_URL}/fiscal-years`);
+    return response.data.map((fiscalYear: { year: number }) => fiscalYear.year);
   } catch (error) {
     console.error("Error fetching years:", error);
     throw error;

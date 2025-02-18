@@ -68,9 +68,9 @@ const PaymentTable: React.FC<PaymentTableProps> = ({
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div className="excel-container">
-            <div className="excel-scrollable">
-                <table className="excel-table">
+        <div className="data-container">
+            <div className="data-scrollable">
+                <table className="data-table">
                     <thead>
                         <tr>
                             <th>
