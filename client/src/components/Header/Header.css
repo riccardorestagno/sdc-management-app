@@ -1,0 +1,31 @@
+.header {
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    color: white;
+    padding: 10px 20px;
+}
+
+.title {
+    margin: 0;
+}
+
+.logoutButton {
+    background-color: #001aff;
+    color: white;
+    border: none;
+    margin-left: auto;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    width: 120px;
+    max-width: 150px;
+    min-width: 100px;
+}
+
+.logoutButton:hover {
+    background-color: #00189e;
+}

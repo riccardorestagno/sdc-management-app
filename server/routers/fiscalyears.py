@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import distinct, desc
 from sqlalchemy.orm import Session
-from server.database.session import get_db
-from server.database.models import FiscalYear
+from database.session import get_db
+from database.models import FiscalYear
 
 router = APIRouter()
 

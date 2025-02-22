@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import './WaterHeaterInfo.css';
 import { getUnitInfoList } from '../../../services/api';
 import UnitNumbers from '../../../enums/unitNumbers';
-import SelectableAddressButton from '../../../components/admin/SelectableAddressButton';
-import OwnerInfo from '../../../components/admin/OwnerInfo';
+import SelectableAddressButton from '../../../components/admin/SelectableAddressButton/SelectableAddressButton';
+import OwnerInfo from '../../../components/OwnerInfo/OwnerInfo';
 
 const WaterHeaterInfo = () => {
 

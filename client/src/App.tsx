@@ -1,88 +1,26 @@
-import { useState } from 'react';
-import './App.css';
-import { AdminTabs } from './enums/adminTabs';
-import { CoOwnerTabs } from './enums/coOwnerTabs';
-import { AccessType } from './enums/accessType';
-import CondoFees from './pages/admin/CondoFees/CondoFees';
-import WaterHeaterInfo from './pages/admin/WaterHeaterInfo/WaterHeaterInfo';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { JSX, useContext } from "react";
+import { AuthContext, AuthProvider } from "./pages/Login/authContext";
+import { Login } from "./pages/Login/LoginPage";
+
+import Dashboard from "./pages/Dashboard/Dashboard";
+
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { token } = useContext(AuthContext)!;
+  return token ? children : <Navigate to="/login" />;
+};
 
 const App = () => {
-  // State for active column and row tabs
-  const [activeColumn, setActiveColumn] = useState(0);
-  const [activeRow, setActiveRow] = useState([0, 0]);
-
-  // Data structure for tabs
-  const columnTabs = [AccessType.ADMIN, AccessType.COOWNER];
-  const rowTabs = [
-    [AdminTabs.CONDO_FEES, AdminTabs.BANK_ACCOUNT, AdminTabs.TANK_REPLACEMENT],
-    [CoOwnerTabs.CONDO_FEES, CoOwnerTabs.NOTIFICATIONS],
-  ];
-
-  const renderDetails = () => {
-    switch (columnTabs[activeColumn]) {
-      case AccessType.ADMIN:
-        switch (rowTabs[activeColumn][activeRow[activeColumn]]) {
-          case AdminTabs.CONDO_FEES:
-            return <CondoFees currentYear={2025} />;
-          // case AdminTabs.BANK_ACCOUNT:
-          //   return <AdminBankAccount />;
-          case AdminTabs.TANK_REPLACEMENT:
-            return <WaterHeaterInfo />;
-          default:
-            return <p>No details available for this row.</p>;
-        }
-      case AccessType.COOWNER:
-        switch (rowTabs[activeColumn][activeRow[activeColumn]]) {
-          // case CoOwnerTabs.CONDO_FEES:
-          //   return <CondoFees />;
-          // case CoOwnerTabs.NOTIFICATIONS:
-          //   return <Notifications />;
-          default:
-            return <p>No details available for this row.</p>;
-        }
-      default:
-        return <p>No details available for this column.</p>;
-    }
-  };
-
   return (
-    <div className="app-container">
-      <div className="columns">
-        {columnTabs.map((column, columnIndex) => (
-          <button
-            key={columnIndex}
-            className={`column-tab ${activeColumn === columnIndex ? 'active' : ''}`}
-            onClick={() => setActiveColumn(columnIndex)}
-          >
-            {column}
-          </button>
-        ))}
-      </div>
-      <div className="content">
-        <div className="rows">
-          {rowTabs[activeColumn].map((row, rowIndex) => (
-            <button
-              key={rowIndex}
-              className={`row-tab ${activeRow[activeColumn] === rowIndex ? 'active' : ''}`}
-              onClick={() => {
-                const updatedActiveRows = [...activeRow];
-                updatedActiveRows[activeColumn] = rowIndex;
-                setActiveRow(updatedActiveRows);
-              }}
-            >
-              {row}
-            </button>
-          ))}
-        </div>
-        <div className="details">
-          {activeColumn !== null && activeRow[activeColumn] !== undefined && (
-            <>
-              {renderDetails()}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 

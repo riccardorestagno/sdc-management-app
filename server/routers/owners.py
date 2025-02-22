@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from schemas.owner import OwnerUpdateRequest
-from server.database.session import get_db
-from server.database.models import Owner, Unit
+from database.session import get_db
+from database.models import Owner, Unit
 
 router = APIRouter()
 

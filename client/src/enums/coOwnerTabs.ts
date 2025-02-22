@@ -1,4 +1,4 @@
 export const CoOwnerTabs = {
-    CONDO_FEES: 'Condo Fees',
+    OWNER_INFO: 'Owner Info',
     NOTIFICATIONS: 'Notifications'
 };

@@ -3,10 +3,10 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.sql import exists
 from sqlalchemy.orm import Session
-from server.database.session import get_db
-from server.database.models import Unit, Payment, FiscalYear
-from server.schemas.payment import InitializeFiscalYearRequest, PaymentUpdateRequest
-from server.enums.payment import PayFrequency
+from database.session import get_db
+from database.models import Unit, Payment, FiscalYear
+from schemas.payment import InitializeFiscalYearRequest, PaymentUpdateRequest
+from enums.payment import PayFrequency
 
 router = APIRouter()
 

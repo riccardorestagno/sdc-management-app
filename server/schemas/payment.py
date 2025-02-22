@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from server.enums.payment import PayFrequency, Month
+from enums.payment import PayFrequency, Month
 
 
 class InitializeFiscalYearRequest(BaseModel):

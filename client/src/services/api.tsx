@@ -8,6 +8,15 @@ interface OwnerUpdateRequest {
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
+export const login = async (email: string, password: string) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
+    return response.data;
+  } catch (error) {
+    throw new Error("Invalid credentials");
+  }
+};
+
 export const getUnitInfoList = async (): Promise<any> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/units`);

@@ -1,5 +1,5 @@
 import json
-from server.database.database import Database, models
+from database.database import Database, models
 
 
 def load_data_from_json(file_path):

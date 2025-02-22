@@ -4,7 +4,7 @@ import Months from '../../../../enums/months';
 import PayFrequencyType from '../../../../enums/payFrequencyType';
 import UnitNumbers from '../../../../enums/unitNumbers';
 import { getFiscalYear, getPayments, getYears } from '../../../../services/api';
-import SelectableAddressButton from '../../../../components/admin/SelectableAddressButton';
+import SelectableAddressButton from '../../../../components/admin/SelectableAddressButton/SelectableAddressButton';
 
 interface PaymentTableProps {
     selectedYear: number;
