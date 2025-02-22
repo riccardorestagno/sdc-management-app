@@ -10,7 +10,7 @@ interface OwnerInfoProps {
     admin?: boolean;
 }
 
-const OwnerInfo = ({ selectedUnitAddressId }: { selectedUnitAddressId: string }) => {
+const OwnerInfo = ({ selectedUnitAddressId, displayBasicInfoOnly = false }: { selectedUnitAddressId: string, displayBasicInfoOnly?: boolean }) => {
 
     const [ownerInfo, setOwnerInfo] = useState<OwnerInfoProps>({} as OwnerInfoProps);
     const [isEditing, setIsEditing] = useState(false);
@@ -106,22 +106,24 @@ const OwnerInfo = ({ selectedUnitAddressId }: { selectedUnitAddressId: string })
                     <span> {ownerInfo.number}</span>
                 )}
             </p>
-            <p>
-                <span className="owner-info-label">Monthly fee:</span>{" "}
-                {ownerInfo.monthly_fee !== null && ownerInfo.monthly_fee !== undefined
-                    ? `$${(Math.round(ownerInfo.monthly_fee * 100) / 100).toFixed(2)}`
-                    : "N/A"}
-            </p>
+            {!displayBasicInfoOnly &&
+                <div><p>
+                    <span className="owner-info-label">Monthly fee:</span>{" "}
+                    {ownerInfo.monthly_fee !== null && ownerInfo.monthly_fee !== undefined
+                        ? `$${(Math.round(ownerInfo.monthly_fee * 100) / 100).toFixed(2)}`
+                        : "N/A"}
+                </p>
 
-            <p><span className="owner-info-label">Notes on file:</span></p>
+                    <p><span className="owner-info-label">Notes on file:</span></p>
 
-            <button
-                onClick={toggleEdit}
-                className="owner-info-button"
-                disabled={loading}
-            >
-                {loading ? "Saving..." : isEditing ? "Save" : "Edit"}
-            </button>
+                    <button
+                        onClick={toggleEdit}
+                        className="owner-info-button"
+                        disabled={loading}
+                    >
+                        {loading ? "Saving..." : isEditing ? "Save" : "Edit"}
+                    </button>
+                </div>}
         </div>
     );
 };

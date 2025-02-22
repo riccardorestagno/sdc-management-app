@@ -70,7 +70,7 @@ const WaterHeaterInfo = () => {
                         </tbody>
                     </table>
                 </div>
-                <OwnerInfo selectedUnitAddressId={selectedUnitAddressId} />
+                <OwnerInfo selectedUnitAddressId={selectedUnitAddressId} displayBasicInfoOnly={true} />
             </div>
         </div>
     );
