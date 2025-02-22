@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import distinct
 from sqlalchemy.sql import exists
 from sqlalchemy.orm import Session
 from server.database.session import get_db

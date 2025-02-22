@@ -17,14 +17,14 @@ const WaterHeaterInfo = () => {
     const [selectedUnitAddressId, setSelectedUnitAddressId] = useState('');
 
     const formatDate = (date: Date | null) => {
-        return date ? date.toLocaleDateString() : "";
+        return date ? date.toISOString().split("T")[0] : "";
     };
 
     const addTenYearsAndFormat = (date: Date | null) => {
         if (!date) return "";
         const newDate = new Date(date);
         newDate.setFullYear(newDate.getFullYear() + 10);
-        return newDate.toLocaleDateString();
+        return formatDate(newDate);
     };
 
     useEffect(() => {

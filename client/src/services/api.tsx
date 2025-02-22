@@ -1,5 +1,11 @@
 import axios from "axios";
 
+interface OwnerUpdateRequest {
+  name: string;
+  email: string;
+  number: string;
+}
+
 const API_BASE_URL = "http://127.0.0.1:8000";
 
 export const getUnitInfoList = async (): Promise<any> => {
@@ -38,6 +44,19 @@ export const getOwnerInfoByUnitAddressId = async (unit_address_id: string | null
       return {};
     }
     const response = await axios.get(`${API_BASE_URL}/owners/unit/${unit_address_id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching owner info:", error);
+    throw error;
+  }
+};
+
+export const updateOwnerInfoByUnitAddressId = async (unit_address_id: string | null, updated_owner_info: OwnerUpdateRequest): Promise<any> => {
+  try {
+    if (!unit_address_id) {
+      return {};
+    }
+    const response = await axios.put(`${API_BASE_URL}/owners/unit/${unit_address_id}`, updated_owner_info);
     return response.data;
   } catch (error) {
     console.error("Error fetching owner info:", error);
