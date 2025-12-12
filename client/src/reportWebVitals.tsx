@@ -1,14 +1,13 @@
-const { getCLS, getFID, getFCP, getLCP, getTTFB } = require('web-vitals');
+import { onCLS, onFCP, onLCP, onTTFB } from 'web-vitals';
 
 type ReportWebVitalsCallback = (metric: any) => void;
 
 const reportWebVitals = (onPerfEntry?: ReportWebVitalsCallback): void => {
   if (onPerfEntry && typeof onPerfEntry === 'function') {
-    getCLS(onPerfEntry);
-    getFID(onPerfEntry);
-    getFCP(onPerfEntry);
-    getLCP(onPerfEntry);
-    getTTFB(onPerfEntry);
+    onCLS(onPerfEntry);
+    onFCP(onPerfEntry);
+    onLCP(onPerfEntry);
+    onTTFB(onPerfEntry);
   }
 };
 
