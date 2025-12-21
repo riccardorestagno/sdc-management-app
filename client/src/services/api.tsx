@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 interface OwnerUpdateRequest {
   name: string;
@@ -8,12 +8,84 @@ interface OwnerUpdateRequest {
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 
+// Token decryption utility (matching authContext.tsx)
+const decryptToken = (encrypted: string): string | null => {
+  try {
+    const key = "SDC_SECURE_KEY_2025";
+    const decoded = atob(encrypted);
+    let decrypted = "";
+    for (let i = 0; i < decoded.length; i++) {
+      decrypted += String.fromCharCode(decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    }
+    return decrypted;
+  } catch {
+    return null;
+  }
+};
+
+// Axios request interceptor - adds auth token to all requests
+axios.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    // Get encrypted token from localStorage
+    const encryptedToken = localStorage.getItem("auth_token");
+    
+    if (encryptedToken) {
+      const token = decryptToken(encryptedToken);
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    
+    // Add CSRF protection header
+    config.headers["X-Requested-With"] = "XMLHttpRequest";
+    
+    // Add security headers
+    config.headers["Content-Type"] = config.headers["Content-Type"] || "application/json";
+    
+    return config;
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  }
+);
+
+// Axios response interceptor - handles token expiration and errors
+axios.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    // Handle 401 Unauthorized - token expired or invalid
+    if (error.response?.status === 401) {
+      // Clear stored tokens
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("token_expiry");
+      
+      // Redirect to login if not already there
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    
+    // Handle 403 Forbidden - insufficient permissions
+    if (error.response?.status === 403) {
+      console.error("Access denied: Insufficient permissions");
+    }
+    
+    // Handle network errors
+    if (!error.response) {
+      console.error("Network error: Unable to reach server");
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 export const login = async (email: string, password: string) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
     return response.data;
-  } catch (error) {
-    throw new Error("Invalid credentials");
+  } catch (error: any) {
+    throw error;
   }
 };
 
@@ -100,7 +172,7 @@ export const updatePayment = async (year: number, paymentData: object): Promise<
     console.log("Payment updated successfully:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error updating payment:", error.response?.data || error.message);
+    console.error("Error updating payment:", axios.isAxiosError(error) ? error.response?.data || error.message : error);
     throw error;
   }
 };
@@ -119,7 +191,7 @@ export const initializeFiscalYear = async (year: number, fiscalYearData: object)
     console.log("Fiscal year initialized successfully:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error initializing new fiscal year:", error.response?.data || error.message);
+    console.error("Error initializing new fiscal year:", axios.isAxiosError(error) ? error.response?.data || error.message : error);
     throw error;
   }
 };
@@ -130,7 +202,7 @@ export const deleteFiscalYear = async (year: number): Promise<any> => {
     console.log("Fiscal year deleted successfully:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error deleting new fiscal year:", error.response?.data || error.message);
+    console.error("Error deleting new fiscal year:", axios.isAxiosError(error) ? error.response?.data || error.message : error);
     throw error;
   }
 };

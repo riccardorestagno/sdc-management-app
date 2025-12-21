@@ -6,8 +6,13 @@ import { Login } from "./pages/Login/LoginPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { token } = useContext(AuthContext)!;
-  return token ? children : <Navigate to="/login" />;
+  const { isAuthenticated } = useContext(AuthContext)!;
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+const PublicRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated } = useContext(AuthContext)!;
+  return !isAuthenticated ? children : <Navigate to="/dashboard" />;
 };
 
 const App = () => {
@@ -15,7 +20,7 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
